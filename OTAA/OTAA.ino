@@ -15,7 +15,7 @@ TinyGPSPlus gps;
 
 void setup(void)
 {
-    //SerialUSB.begin(115200);
+    SerialUSB.begin(115200);
     //while(!SerialUSB);
     
     //Battery
@@ -29,15 +29,15 @@ void setup(void)
     
     memset(buffer, 0, 256);
     lora.getVersion(buffer, 256, 1);
-    //SerialUSB.print(buffer); 
+    SerialUSB.print(buffer); 
     
     memset(buffer, 0, 256);
     lora.getId(buffer, 256, 1);
-    //SerialUSB.print(buffer);
+    SerialUSB.print(buffer);
 
     // setKey(char *NwkSKey, char *AppSKey, char *AppKey)
-    //lora.setKey("2B7E151628AED2A6ABF7158809CF4F3C", "2B7E151628AED2A6ABF7158809CF4F3C", "2B7E151628AED2A6ABF7158809CF4F3C");
-    lora.setKey(NULL, NULL, "2B7E151628AED2A6ABF7158809CF4F3C");
+    lora.setKey("2B7E151628AED2A6ABF7158809CF4F3C", "2B7E151628AED2A6ABF7158809CF4F3C", "2B7E151628AED2A6ABF7158809CF4F3C");
+    //lora.setKey(NULL, NULL, "2B7E151628AED2A6ABF7158809CF4F3C");
 
     lora.setDeciveMode(LWOTAA);
     lora.setDataRate(DR2, EU868);
@@ -52,7 +52,7 @@ void setup(void)
     lora.setReceiceWindowFirst(0);
     lora.setReceiceWindowSecond(926.4, DR2);
     //lora.setReceiceWindowSecond(926.4, SF12, BW125);
-    lora.setReceiceWindowDelay(JOIN_ACCEPT_DELAY2,6000);
+    //lora.setReceiceWindowDelay(JOIN_ACCEPT_DELAY2,6000);
     
     lora.setPower(20);
     lora.setAdaptiveDataRate(true);
@@ -67,8 +67,8 @@ void loop(void)
     
     int a = analogRead(pin_battery_voltage);
     float v = a/1023.0*3.3*11.0;        // there's an 1M and 100k resistor divider
-    //SerialUSB.print("BAT:");
-    //SerialUSB.println(v, 2);
+    SerialUSB.print("BAT:");
+    SerialUSB.println(v, 2);
     
     //Battery <-
     bool result = false;
@@ -91,8 +91,8 @@ void loop(void)
 
     gpsString += String(int(lat)) + "." + String(getDecimal(lat)) + ",";
     gpsString += String(int(lng)) + "." + String(getDecimal(lng)) + ",";
-    //gpsString += String(int(v)) + "." + String(getDecimal(v));
-    gpsString += String(lora.getBatteryVoltage());
+    gpsString += String(int(v)) + "." + String(getDecimal(v));
+    //gpsString += String(lora.getBatteryVoltage());
 
     char charVal[gpsString.length()+1];                      //initialise character array to store the values
     gpsString.toCharArray(charVal,gpsString.length()+1);
@@ -130,8 +130,8 @@ void loop(void)
     }
 
     */
-    delay(10000);
-    smartdelay(10000);
+    //delay(6000);
+    smartdelay(60000);
 }
 
 
@@ -147,7 +147,7 @@ static void smartdelay(unsigned long ms) {
 long getDecimal(float val)
 {
   int intPart = int(val);
-  long decPart = 1000*(val-intPart); //I am multiplying by 1000 assuming that the foat values will have a maximum of 3 decimal places. 
+  long decPart = 1000000*(val-intPart); //I am multiplying by 1000 assuming that the foat values will have a maximum of 3 decimal places. 
                                     //Change to match the number of decimal places you need
   if(decPart>0)return(decPart);           //return the decimal part of float number if it is available 
   else if(decPart<0)return((-1)*decPart); //if negative, multiply by -1
